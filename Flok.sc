@@ -1,37 +1,29 @@
 Flok {
-	*start {
-		arg verbose = false;
+	classvar <>started = false;
 
-		'Listening for messages from Flok'.postln;
+	*start { |port=57200|
+		var net;
 
-		// Listen for other messages and check the password
+		if (this.started == true) {
+			"Flok has already been started".postln;
+			^this;
+		};
 
-		OSCFunc(
-			{
-				arg msg, time, addr, port;
-				var interp;
+		// Open UDP port. Only listen to OSC messages from localhost.
+		net = NetAddr.new("127.0.0.1");
+		thisProcess.openUDPPort(port);
 
-				// If the verbose flag is True, print the code
+		OSCFunc({ |msg, time, addr, port|
+			var body = msg[1].asString;
 
-				if (verbose == true){
-					msg[1].asString.postln;
-				};
+			// Interpret code sent
+			defer {
+				thisProcess.interpreter.cmdLine_(body).interpretPrintCmdLine;
+			};
+		}, '/flok', net);
 
-				// Only interpret code sent from a local ip address
+		this.started = true;
 
-				if (NetAddr.matchLangIP(addr.ip) == true) {
-					defer {
-						thisProcess.interpreter
-						.cmdLine_(msg[1].asString)
-						.interpretPrintCmdLine;
-					}
-				} {
-					'Warning: external Flok message attempted from'.postln;
-					addr.postln;
-				};
-
-			},
-			'flok'
-		);
+		"Flok started. Listening for messages on port %...".format(port).postln;
 	}
 }
