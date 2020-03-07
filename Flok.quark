@@ -1,0 +1,6 @@
+(
+	\name: 			"Flok",
+	\summary:		"OSCFunc that allows flok-repl to execute SuperCollider code",
+	\author: 		"Damian Silvani, Ryan Kirkbride",
+	\since: 		"2020",
+)
