@@ -20,7 +20,7 @@ Flok {
 			defer {
 				thisProcess.interpreter.cmdLine_(body).interpretPrintCmdLine;
 			};
-		}, '/flok', net);
+		}, '/flok', net).permanent_(true);
 
 		this.started = true;
 
